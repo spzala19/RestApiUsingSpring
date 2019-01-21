@@ -1,0 +1,88 @@
+package app;
+import java.util.List;
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import app.Student;
+import app.StudentDao;
+
+@RestController
+@RequestMapping("/collage")
+public class StudentController {
+	
+	@Autowired
+	StudentDao studentDao;
+	
+	/* to save an Student*/
+	@PostMapping("/students")
+	public Student createStudent(@Valid @RequestBody Student std) {
+		return studentDao.save(std);
+	}
+	
+	/*get all Students*/
+	@GetMapping("/students")
+	public List<Student> getAllStudents(){
+		return studentDao.findAll();
+	}
+	
+	/*get Student by stdid*/
+	@GetMapping("/students/{id}")
+	public ResponseEntity<Student> getStudentById(@PathVariable(value="id") Long stdid){
+		
+		Student std=studentDao.findOne(stdid);
+		
+		if(std==null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().body(std);
+		
+	}
+	
+	
+	/*update an Student by stdid*/
+	@PutMapping("/students/{id}")
+	public ResponseEntity<Student> updateStudent(@PathVariable(value="id") Long stdid,@Valid @RequestBody Student stdDetails){
+		
+		Student std=studentDao.findOne(stdid);
+		if(std==null) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		std.setName(stdDetails.getName());
+		std.setDepartment(stdDetails.getDepartment());
+		std.setTechnology(stdDetails.getTechnology());
+		
+		Student updateStudent=studentDao.save(std);
+		return ResponseEntity.ok().body(updateStudent);
+		
+		
+		
+	}
+	
+	/*Delete an Student*/
+	@DeleteMapping("/students/{id}")
+	public ResponseEntity<Student> deleteStudent(@PathVariable(value="id") Long stdid){
+		
+		Student emp=studentDao.findOne(stdid);
+		if(emp==null) {
+			return ResponseEntity.notFound().build();
+		}
+		studentDao.delete(emp);
+		
+		return ResponseEntity.ok().build();
+		
+		
+	}
+	
+	
+
+}

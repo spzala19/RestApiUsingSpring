@@ -1,0 +1,5 @@
+app\modal\Student.class
+app\controller\StudentController.class
+app\dao\StudentDao.class
+app\repository\StudentRepository.class
+app\StudentApplication.class
